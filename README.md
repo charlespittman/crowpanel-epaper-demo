@@ -1,5 +1,10 @@
 # CrowPanel 4.2" E-paper demo (ESP-IDF)
 
+> **Warning: this code is AI-generated.** It was written with Claude (Anthropic's AI
+> assistant) and has only been tested on one board, the version with the green
+> circular sticker described below. It may contain mistakes. Read and understand it
+> before you rely on it, and check it against your own hardware.
+
 A counter demo for the Elecrow CrowPanel ESP32 4.2" E-paper HMI display
 (ESP32-S3, 400 x 300, black and white).
 
