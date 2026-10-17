@@ -57,10 +57,3 @@ python3 $IDF_PATH/tools/idf.py -p /dev/ttyUSB0 -b 230400 flash monitor
 
 Use a baud rate of 230400 or lower when flashing. A flash at 460800 once dropped
 mid-write and left the board in a boot loop.
-
-## Restoring the factory firmware
-
-Elecrow's factory images are in `factory_firmware/` in their repo. For this board
-version use the folder `E-paper_4.2inch_PCBA-V1.2A_green_circular_sticker_on_the_back`.
-Flash the bootloader to `0x0`, the partition table to `0x8000`, `boot_app0.bin` to
-`0xe000` and the app to `0x10000`.
