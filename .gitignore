@@ -1,0 +1,7 @@
+# ESP-IDF build output and generated config
+build/
+sdkconfig
+sdkconfig.old
+
+# Editor settings with machine-specific paths
+.vscode/
