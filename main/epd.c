@@ -212,8 +212,9 @@ void epd_rect(int x, int y, int w, int h, bool black)
 // Draw text with a 5x7 pixel font. scale = 2 makes each font pixel 2x2, and so on.
 void epd_text(int x, int y, const char *text, int scale, bool black)
 {
+    // After each letter, move right by 5 pixels (letter width) + 1 pixel (gap).
     for (; *text != '\0'; text++, x += 6 * scale)
-    { // 5 pixels wide + 1 gap
+    {
         char c = *text;
         if (c >= 'a' && c <= 'z')
         {
@@ -229,8 +230,9 @@ void epd_text(int x, int y, const char *text, int scale, bool black)
         {
             for (int row = 0; row < 7; row++)
             {
+                // Is this pixel of the letter switched on?
                 if (glyph[col] & (1 << row))
-                { // is this font pixel on?
+                {
                     epd_rect(x + col * scale, y + row * scale, scale, scale, black);
                 }
             }
