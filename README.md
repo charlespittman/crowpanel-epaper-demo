@@ -10,6 +10,10 @@ A counter demo for the Elecrow CrowPanel ESP32 4.2" E-paper HMI display
 
 - **UP / DOWN** buttons change the count
 - **OK** button resets it to zero
+- **MENU** button changes the step, the amount UP and DOWN change the count by
+  (1, 5 or 10)
+- **EXIT** button cleans the screen with a full refresh (it flashes) to remove
+  faint ghost images
 - The red LED is on while the program runs
 - Updates use **partial refresh**, so the screen doesn't flash. Every 10th update is a
   full refresh (the screen flashes) to clear faint ghost images. Change
