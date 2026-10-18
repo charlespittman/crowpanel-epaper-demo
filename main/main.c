@@ -17,6 +17,9 @@
 // The red LED on the board. High = on.
 #define LED_PIN 41
 
+// Do a full (flashing) refresh once every this many screen updates.
+#define FULL_REFRESH_EVERY 10
+
 static void button_init(int pin)
 {
     gpio_set_direction(pin, GPIO_MODE_INPUT);
@@ -61,7 +64,16 @@ static void draw_screen(int count)
         epd_rect(24 + i * 18, 250, 18, 18, true);
     }
 
-    epd_refresh();   // nothing above shows up until this line
+    // Nothing above shows up until a refresh. Partial refreshes don't flash,
+    // but faint ghosts of old pictures build up. So every few updates we do
+    // a full refresh, which flashes the screen and wipes the ghosts away.
+    static int updates = 0;                      // "static": keeps its value between calls
+    if (updates % FULL_REFRESH_EVERY == 0) {
+        epd_refresh_full();
+    } else {
+        epd_refresh_partial();
+    }
+    updates++;
 }
 
 void app_main(void)

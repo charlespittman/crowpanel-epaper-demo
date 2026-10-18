@@ -11,6 +11,9 @@ A counter demo for the Elecrow CrowPanel ESP32 4.2" E-paper HMI display
 - **UP / DOWN** buttons change the count
 - **OK** button resets it to zero
 - The red LED is on while the program runs
+- Updates use **partial refresh**, so the screen doesn't flash. Every 10th update is a
+  full refresh (the screen flashes) to clear faint ghost images. Change
+  `FULL_REFRESH_EVERY` in `main/main.c` to adjust this.
 
 ## Board version matters
 
@@ -47,7 +50,7 @@ If you have a different version of the board, check the other example folders th
 | `main/font5x7.h` | 5x7 pixel font, capitals only |
 
 Drawing calls (`epd_rect`, `epd_text`) only change a buffer in memory.
-Nothing shows on the screen until `epd_refresh()` is called.
+Nothing shows on the screen until `epd_refresh_full()` or `epd_refresh_partial()` is called.
 
 ## Build and flash
 

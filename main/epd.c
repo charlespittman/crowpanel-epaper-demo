@@ -102,26 +102,57 @@ static void configure_screen(void)
     data(0x88);
 }
 
-// The "waveform" tells the screen how to drive its black and white particles.
+// A "waveform" tells the screen how to drive its black and white particles.
 // There are 5 tables of 42 bytes (sent to commands 0x20 to 0x24).
-// Only the first 7 bytes of each table are non-zero.
-static void send_waveform(void)
-{
-    static const uint8_t start_of_table[5][7] = {
-        {0x01, 0x14, 0x0A, 0x14, 0x00, 0x01, 0x01},
-        {0x01, 0x54, 0x0A, 0x94, 0x00, 0x01, 0x01},
-        {0x01, 0x54, 0x0A, 0x94, 0x00, 0x01, 0x01},
-        {0x01, 0x94, 0x0A, 0x54, 0x00, 0x01, 0x01},
-        {0x01, 0x94, 0x0A, 0x54, 0x00, 0x01, 0x01},
-    };
+// Only the first 7 bytes of each table are non-zero, so that is all we store.
 
+// Full refresh: flashes black and white to wipe away old ghost images. Slow.
+static const uint8_t waveform_full[5][7] = {
+    {0x01, 0x14, 0x0A, 0x14, 0x00, 0x01, 0x01},
+    {0x01, 0x54, 0x0A, 0x94, 0x00, 0x01, 0x01},
+    {0x01, 0x54, 0x0A, 0x94, 0x00, 0x01, 0x01},
+    {0x01, 0x94, 0x0A, 0x54, 0x00, 0x01, 0x01},
+    {0x01, 0x94, 0x0A, 0x54, 0x00, 0x01, 0x01},
+};
+
+// Partial refresh: only changes the pixels that are different. No flashing.
+static const uint8_t waveform_partial[5][7] = {
+    {0x01, 0x14, 0x00, 0x00, 0x00, 0x01, 0x00},
+    {0x01, 0x14, 0x00, 0x00, 0x00, 0x01, 0x00},
+    {0x01, 0x94, 0x00, 0x00, 0x00, 0x01, 0x00},
+    {0x01, 0x54, 0x00, 0x00, 0x00, 0x01, 0x00},
+    {0x01, 0x14, 0x00, 0x00, 0x00, 0x01, 0x00},
+};
+
+static void send_waveform(const uint8_t waveform[5][7])
+{
     for (int i = 0; i < 5; i++)
     {
-        uint8_t table[42] = {0};             // starts out all zeros
-        memcpy(table, start_of_table[i], 7); // fill in the first 7 bytes
+        uint8_t table[42] = {0};         // starts out all zeros
+        memcpy(table, waveform[i], 7);   // fill in the first 7 bytes
         command(0x20 + i);
         send(1, table, sizeof table);
     }
+}
+
+// Send the picture in the buffer to the screen and start a refresh.
+// The waveform decides whether it is a full or a partial refresh.
+static void refresh(const uint8_t waveform[5][7])
+{
+    command(0x50);
+    data(0xD7);
+    command(0x13);
+    send(1, buffer, BUFFER_SIZE); // the new picture
+    send_waveform(waveform);
+    command(0x17);
+    data(0xA5); // start the refresh
+    wait_until_ready();
+
+    // Tell the screen what is showing now (command 0x10 = "previous picture").
+    // A partial refresh compares the previous and the new picture, and only
+    // changes the pixels that are different.
+    command(0x10);
+    send(1, buffer, BUFFER_SIZE);
 }
 
 // ---------------------------------------------------------------
@@ -167,11 +198,11 @@ void epd_init(void)
     configure_screen();
 
     // Start with a white screen. Command 0x10 holds the "previous picture"
-    // (white), and epd_refresh() then sends the new picture to 0x13.
+    // (white), and the refresh then sends the new picture.
     epd_clear();
     command(0x10);
     send(1, buffer, BUFFER_SIZE);
-    epd_refresh();
+    epd_refresh_full();
 }
 
 void epd_clear(void)
@@ -240,14 +271,12 @@ void epd_text(int x, int y, const char *text, int scale, bool black)
     }
 }
 
-void epd_refresh(void)
+void epd_refresh_full(void)
 {
-    command(0x50);
-    data(0xD7);
-    command(0x13);
-    send(1, buffer, BUFFER_SIZE); // the new picture
-    send_waveform();
-    command(0x17);
-    data(0xA5); // start the refresh
-    wait_until_ready();
+    refresh(waveform_full);
+}
+
+void epd_refresh_partial(void)
+{
+    refresh(waveform_partial);
 }
