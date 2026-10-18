@@ -51,7 +51,7 @@ If you have a different version of the board, check the other example folders th
 |---|---|
 | `main/main.c` | The demo: buttons, counter, drawing the screen |
 | `main/epd.c`, `main/epd.h` | Screen driver: SPI, setup, drawing into a memory buffer, refresh |
-| `main/font5x7.h` | 5x7 pixel font, capitals only |
+| `main/font5x7.h` | 5x7 pixel font, all printable ASCII characters (letters in both cases, digits, punctuation) |
 
 Drawing calls (`epd_rect`, `epd_text`) only change a buffer in memory.
 Nothing shows on the screen until `epd_refresh_full()` or `epd_refresh_partial()` is called.

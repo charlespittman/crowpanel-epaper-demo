@@ -51,24 +51,24 @@ static void draw_screen(int count, int step, bool force_full)
 
     // Title bar: black rectangle with white text on top
     epd_rect(0, 0, EPD_W, 40, true);
-    epd_text(12, 8, "CROWPANEL 4.2 EINK", 3, false);
+    epd_text(12, 8, "CrowPanel 4.2 E-ink", 3, false);
 
     // Frame: a black rectangle with a slightly smaller white one inside
     epd_rect(10, 52, 380, 238, true);
     epd_rect(12, 54, 376, 234, false);
 
     // The counter, in big letters
-    snprintf(text, sizeof text, "COUNT: %d", count);
+    snprintf(text, sizeof text, "Count: %d", count);
     epd_text(24, 100, text, 4, true);
 
-    snprintf(text, sizeof text, "STEP: %d", step);
+    snprintf(text, sizeof text, "Step: %d", step);
     epd_text(24, 140, text, 2, true);
 
     // Help text
-    epd_text(24, 164, "UP/DOWN: CHANGE COUNT", 2, true);
-    epd_text(24, 184, "OK: RESET TO ZERO", 2, true);
-    epd_text(24, 204, "MENU: CHANGE STEP", 2, true);
-    epd_text(24, 224, "EXIT: CLEAN SCREEN", 2, true);
+    epd_text(24, 164, "Up/Down: change count", 2, true);
+    epd_text(24, 184, "OK: reset to zero", 2, true);
+    epd_text(24, 204, "Menu: change step", 2, true);
+    epd_text(24, 224, "Exit: clean screen", 2, true);
 
     // Strip of black squares along the bottom
     for (int i = 0; i < 20; i += 2) {

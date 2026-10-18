@@ -247,11 +247,7 @@ void epd_text(int x, int y, const char *text, int scale, bool black)
     for (; *text != '\0'; text++, x += 6 * scale)
     {
         char c = *text;
-        if (c >= 'a' && c <= 'z')
-        {
-            c -= 32; // the font only has capitals
-        }
-        if (c < ' ' || c > 'Z')
+        if (c < ' ' || c > '~')
         {
             c = '?'; // characters we don't have
         }
